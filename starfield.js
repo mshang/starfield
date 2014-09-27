@@ -1,5 +1,5 @@
 // -- settings, immutable -- //
-var BRIGHTNESS_FACTOR = 10; // Higher = brighter
+var BRIGHTNESS_FACTOR = 15; // Higher = brighter
 var STAR_SIZE_PIXELS = 1.5;
 var STAR_RANGE_INDICES = 10; // Higher = more random looking, comp expensive
 var LEVEL_DEPTH = 5; // Higher = more (faint) stars, comp expensive
@@ -79,12 +79,19 @@ function render() {
       ) {
         var hash = cachedHash(xIndex + ':' + yIndex + ':' + level);
         brightnessToWorldPositions[
-          Math.floor(
+          Math.floor(Math.max(0,
 	    100 * Math.atan(
-              Math.exp(-level + (hash[2] / MAX_INT)) * BRIGHTNESS_FACTOR
-                / Math.exp(-levelForCurrentScale)
+              (
+                Math.exp(
+                  levelForCurrentScale - level - Math.abs(hash[2] / MAX_INT)
+                ) - Math.exp(
+                  // This is to prevent the lowest level of stars from
+                  // suddenly popping in and out with high brightness.
+                  levelForCurrentScale - (startLevel + LEVEL_DEPTH)
+                )
+              ) * BRIGHTNESS_FACTOR
             ) * 2 / Math.PI
-          )
+          ))
         ].push([
           xIndex * spacing
             + (hash[0] / MAX_INT) * spacing * STAR_RANGE_INDICES,
