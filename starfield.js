@@ -9,7 +9,6 @@ var LEVEL_DEPTH = 5; // Higher = more (faint) stars, comp expensive
 // - resize / fullscreen
 // - older browsers / polyfill
 // - debug mode with fps counter
-// - cache of md5s
 
 var MAX_INT = -1 >>> 1;
 
@@ -23,6 +22,16 @@ var scale = 1;
 var canvas = document.getElementById("starfield");
 canvas.style['background-color'] = 'black';
 var context = canvas.getContext('2d');
+
+var cache = new RRCache(100000);
+function cachedMD5(to_hash) {
+  var cached = cache.get(to_hash);
+  if (cached) return cached; else {
+    var digest = SparkMD5.hash(to_hash, true);
+    cache.set(to_hash, digest);
+    return digest;
+  }
+}
 
 function render() {
   var worldWidth = canvas.width / scale;
@@ -47,7 +56,7 @@ function render() {
           + STAR_RANGE_INDICES;
         yIndex++
       ) {
-        var hash = SparkMD5.hash(xIndex + ':' + yIndex + ':' + level, true);
+        var hash = cachedMD5(xIndex + ':' + yIndex + ':' + level);
         var x = xIndex * spacing
           + (hash[0] / MAX_INT) * spacing * STAR_RANGE_INDICES;
         var y = yIndex * spacing
