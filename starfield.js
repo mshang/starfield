@@ -8,7 +8,6 @@ var LEVEL_DEPTH = 5; // Higher = more (faint) stars, comp expensive
 // - touchscreen support
 // - resize / fullscreen
 // - older browsers / polyfill
-// - debug mode with fps counter
 
 var MAX_INT = -1 >>> 1;
 
@@ -22,6 +21,8 @@ var scale = 1;
 var canvas = document.getElementById("starfield");
 canvas.style['background-color'] = 'black';
 var context = canvas.getContext('2d');
+
+var timestamps = [];
 
 var cache = new RRCache(100000);
 function cachedMD5(to_hash) {
@@ -74,6 +75,14 @@ function render() {
         );
       }
     }
+  }
+
+  timestamps.push(new Date().getTime());
+  if (timestamps.length > 10) {
+    console.log(
+      (9 * 1000 / (timestamps[9] - timestamps[0])).toFixed(2) + ' fps'
+    );
+    timestamps = [];
   }
   requestAnimationFrame(render);
 }
