@@ -24,11 +24,27 @@ var context = canvas.getContext('2d');
 
 var timestamps = [];
 
+function hashFnv32a(str) {
+  var i, l,
+    hval = 0x811c9dc5;
+
+  for (i = 0, l = str.length; i < l; i++) {
+    hval ^= str.charCodeAt(i);
+    hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) +
+      (hval << 24);
+  }
+  return hval >> 0;
+}
+
 var cache = new RRCache(100000);
-function cachedMD5(to_hash) {
+function cachedHash(to_hash) {
   var cached = cache.get(to_hash);
   if (cached) return cached; else {
-    var digest = SparkMD5.hash(to_hash, true);
+    var digest = [
+      hashFnv32a(to_hash + 'a'),
+      hashFnv32a(to_hash + 'b'),
+      hashFnv32a(to_hash + 'c')
+    ];
     cache.set(to_hash, digest);
     return digest;
   }
@@ -61,7 +77,7 @@ function render() {
           + STAR_RANGE_INDICES;
         yIndex++
       ) {
-        var hash = cachedMD5(xIndex + ':' + yIndex + ':' + level);
+        var hash = cachedHash(xIndex + ':' + yIndex + ':' + level);
         brightnessToWorldPositions[
           Math.floor(
 	    100 * Math.atan(
