@@ -36,20 +36,6 @@ function hashFnv32a(str) {
   return hval >> 0;
 }
 
-var cache = new RRCache(100000);
-function cachedHash(to_hash) {
-  var cached = cache.get(to_hash);
-  if (cached) return cached; else {
-    var digest = [
-      hashFnv32a(to_hash + 'a'),
-      hashFnv32a(to_hash + 'b'),
-      hashFnv32a(to_hash + 'c')
-    ];
-    cache.set(to_hash, digest);
-    return digest;
-  }
-}
-
 function render() {
   var worldWidth = canvas.width / scale;
   var worldHeight = canvas.height / scale;
@@ -77,19 +63,22 @@ function render() {
           + STAR_RANGE_INDICES;
         yIndex++
       ) {
-        var hash = cachedHash(xIndex + ':' + yIndex + ':' + level);
+        var hash_base = xIndex + ':' + yIndex + ':' + level;
         brightnessToWorldPositions[
           Math.floor(
 	    100 * Math.atan(
-              Math.exp(-level + (hash[2] / MAX_INT)) * BRIGHTNESS_FACTOR
+              Math.exp(-level + (hashFnv32a(hash_base + ':z') / MAX_INT))
+                * BRIGHTNESS_FACTOR
                 / Math.exp(-levelForCurrentScale)
             ) * 2 / Math.PI
           )
         ].push([
           xIndex * spacing
-            + (hash[0] / MAX_INT) * spacing * STAR_RANGE_INDICES,
+            + (hashFnv32a(hash_base + ':x') / MAX_INT) * spacing
+              * STAR_RANGE_INDICES,
           yIndex * spacing
-            + (hash[1] / MAX_INT) * spacing * STAR_RANGE_INDICES,
+            + (hashFnv32a(hash_base + ':y') / MAX_INT) * spacing
+              * STAR_RANGE_INDICES
         ]);
       }
     }
