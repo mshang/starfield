@@ -1,3 +1,5 @@
+/* vim: set softtabstop=2 shiftwidth=2 expandtab: */
+
 // -- settings, immutable -- //
 var BRIGHTNESS_FACTOR = 15; // Higher = brighter
 var STAR_SIZE_PIXELS = 1.5;
