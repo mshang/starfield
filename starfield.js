@@ -43,6 +43,10 @@ function render() {
   var startLevel = Math.floor(levelForCurrentScale);
   context.clearRect(0, 0, canvas.width, canvas.height);
 
+  // setting fillStyle is expensive, so quantize and batch it.
+  var brightnessToWorldPositions = [];
+  for (var i = 0; i < 100; i++) brightnessToWorldPositions.push([]);
+
   for (level = startLevel; level < startLevel + LEVEL_DEPTH; level++) {
     var spacing = Math.exp(-level);
     for (
@@ -58,22 +62,33 @@ function render() {
         yIndex++
       ) {
         var hash = cachedMD5(xIndex + ':' + yIndex + ':' + level);
-        var x = xIndex * spacing
-          + (hash[0] / MAX_INT) * spacing * STAR_RANGE_INDICES;
-        var y = yIndex * spacing
-          + (hash[1] / MAX_INT) * spacing * STAR_RANGE_INDICES;
-	var z = Math.atan(
-          Math.exp(-level + (hash[2] / MAX_INT)) * BRIGHTNESS_FACTOR
-            / Math.exp(-levelForCurrentScale)
-        ) * 2 / Math.PI;
-        context.fillStyle = 'rgba(255, 255, 255, ' + z + ')';
-        context.fillRect(
-          (x - offsetX) * scale,
-          (y - offsetY) * scale,
-          STAR_SIZE_PIXELS,
-          STAR_SIZE_PIXELS
-        );
+        brightnessToWorldPositions[
+          Math.floor(
+	    100 * Math.atan(
+              Math.exp(-level + (hash[2] / MAX_INT)) * BRIGHTNESS_FACTOR
+                / Math.exp(-levelForCurrentScale)
+            ) * 2 / Math.PI
+          )
+        ].push([
+          xIndex * spacing
+            + (hash[0] / MAX_INT) * spacing * STAR_RANGE_INDICES,
+          yIndex * spacing
+            + (hash[1] / MAX_INT) * spacing * STAR_RANGE_INDICES,
+        ]);
       }
+    }
+  }
+
+  for (i = 0; i < 100; i++) {
+    context.fillStyle = 'rgba(255, 255, 255, ' + i / 100 + ')';
+    var to_paint = brightnessToWorldPositions[i];
+    for (var j = 0; j < to_paint.length; j++) {
+      context.fillRect(
+        (to_paint[j][0] - offsetX) * scale,
+        (to_paint[j][1] - offsetY) * scale,
+        STAR_SIZE_PIXELS,
+        STAR_SIZE_PIXELS
+      );
     }
   }
 
