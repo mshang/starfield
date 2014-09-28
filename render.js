@@ -84,35 +84,26 @@
 
   requestAnimationFrame(render);
 
-  canvas.addEventListener("mousedown", function(e) {
-    if (e.button !== 0) return;
+  var hammer = new Hammer(canvas);
+
+  hammer.on('panstart', function(e) {
     mousedown = true;
-    lastMouseX = e.pageX;
-    lastMouseY = e.pageY;
-    pixelVelocityX = 0;
-    pixelVelocityY = 0;
-  }, false);
+    lastMouseX = 0;
+    lastMouseY = 0;
+  });
 
-  document.addEventListener("mousemove", function(e) {
-    var dt = e.timeStamp - lastMoveTimestamp;
+  hammer.on('panmove', function(e) {
+    worldOffsetX -= (e.deltaX - lastMouseX) / scale;
+    worldOffsetY -= (e.deltaY - lastMouseY) / scale;
+    lastMouseX = e.deltaX;
+    lastMouseY = e.deltaY;
+  });
 
-    if (!mousedown) return;
-    var dX = e.pageX - lastMouseX;
-    var dY = e.pageY - lastMouseY;
-    lastMouseX = e.pageX;
-    lastMouseY = e.pageY;
-    worldOffsetX -= dX / scale;
-    worldOffsetY -= dY / scale;
-
-    pixelVelocityX = dX / dt;
-    pixelVelocityY = dY / dt;
-    lastMoveTimestamp = e.timeStamp;
-  }, false);
-
-  document.addEventListener("mouseup", function(e) {
-    if (e.button !== 0) return;
+  hammer.on('panend', function(e) {
     mousedown = false;
-  }, false);
+    pixelVelocityX = -e.velocityX;
+    pixelVelocityY = -e.velocityY;
+  });
 
   canvas.addEventListener("mousewheel", function(e) {
     var mult;
