@@ -34,6 +34,10 @@ canvas.addEventListener("mousewheel", function(e) {
 
 var canvasWidth = canvas.width;
 var canvasHeight = canvas.height;
+if (window.navigator.standalone) {
+  canvas.width = document.body.clientWidth;
+  canvas.height = document.body.clientHeight;
+}
 
 if (typeof screenfull !== "undefined") {
   document.addEventListener(screenfull.raw.fullscreenchange, function() {
