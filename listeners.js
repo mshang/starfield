@@ -1,6 +1,73 @@
+var STAR_SIZE_PIXELS = 1.5;
+var DEBUG = false;
+var timestamps = [];
+
+var worldOffsetX = 0; // Top left has this x coordinate in world frame.
+var worldOffsetY = 0;
+// scale of 1 means 1 world unit = 1 canvas pixel
+// scale of 100 means 1 world unit = 100 canvas pixels
+var scale = 1;
+
 var mousedown = false;
 var lastMouseX;
 var lastMouseY;
+
+function Star(worldX, worldY, brightness) {
+  this.worldX = worldX;
+  this.worldY = worldY;
+  this.brightness = brightness;
+}
+
+var canvas = document.getElementById("starfield");
+canvas.style['background-color'] = 'black';
+
+function render() {
+  var star, stars, i, j, context, brightnessToStars;
+
+  requestAnimationFrame(render);
+
+  stars = getStars(
+    worldOffsetX,
+    worldOffsetY, 
+    canvas.width / scale,
+    canvas.height / scale
+  );
+
+  // setting fillStyle is expensive, so quantize and batch it.
+  brightnessToStars = [];
+  for (i = 0; i < 100; i++) brightnessToStars.push([]);
+  for (i = 0; i < stars.length; i++) {
+    star = stars[i];
+    brightnessToStars[Math.floor(star.brightness * 100)].push(star);
+  }
+
+  context = canvas.getContext('2d')
+  context.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (i = 0; i < 100; i++) {
+    context.fillStyle = 'rgba(255, 255, 255, ' + i / 100 + ')';
+    stars = brightnessToStars[i];
+    for (j = 0; j < stars.length; j++) {
+      star = stars[j];
+      context.fillRect(
+        (star.worldX - worldOffsetX) * scale,
+        (star.worldY - worldOffsetY) * scale,
+        STAR_SIZE_PIXELS,
+        STAR_SIZE_PIXELS
+      );
+    }
+  }
+
+  timestamps.push(new Date().getTime());
+  if (timestamps.length > 10) {
+    if (DEBUG) console.log(
+      (9 * 1000 / (timestamps[9] - timestamps[0])).toFixed(2) + ' fps'
+    );
+    timestamps = [];
+  }
+}
+
+requestAnimationFrame(render);
 
 canvas.addEventListener("mousedown", function(e) {
   if (e.button !== 0) return;
@@ -15,8 +82,8 @@ document.addEventListener("mousemove", function(e) {
   var dY = e.pageY - lastMouseY;
   lastMouseX = e.pageX;
   lastMouseY = e.pageY;
-  offsetX -= dX / scale;
-  offsetY -= dY / scale;
+  worldOffsetX -= dX / scale;
+  worldOffsetY -= dY / scale;
 }, false);
 
 document.addEventListener("mouseup", function(e) {
@@ -27,8 +94,8 @@ canvas.addEventListener("mousewheel", function(e) {
   var mult;
   var rect = canvas.getBoundingClientRect();
   if (e.wheelDelta > 0) mult = 1.1; else mult = 1 / 1.1;
-  offsetX += (e.clientX - rect.left) * (1 - 1 / mult) / scale;
-  offsetY += (e.clientY - rect.top) * (1 - 1 / mult) / scale;
+  worldOffsetX += (e.clientX - rect.left) * (1 - 1 / mult) / scale;
+  worldOffsetY += (e.clientY - rect.top) * (1 - 1 / mult) / scale;
   scale *= mult;
 }, false);
 
