@@ -1,3 +1,5 @@
+/* vim: set softtabstop=2 shiftwidth=2 expandtab: */
+
 var STAR_SIZE_PIXELS = 1.5;
 var DEBUG = false;
 var timestamps = [];
