@@ -2,6 +2,7 @@
 
 (function () {
   var STAR_SIZE_PIXELS = 1.5;
+  var DECELERATION_BLEED_RATIO_PER_TICK = 0.05; // A tick is 1/60 sec.
   var DEBUG = false;
   var timestamps = [];
 
@@ -14,14 +15,31 @@
   var mousedown = false;
   var lastMouseX;
   var lastMouseY;
+  var pixelVelocityX = 0;
+  var pixelVelocityY = 0;
+  var lastMoveTimestamp = 0;
+  var lastRenderTimestamp = 0;
 
   var canvas = document.getElementById("starfield");
   canvas.style['background-color'] = 'black';
 
   function render(timestamp) {
-    var star, stars, i, j, context, brightnessToStars;
+    var star, stars, i, j, context, brightnessToStars, dt, ratio;
 
     requestAnimationFrame(render);
+
+    // deceleration
+    if (lastRenderTimestamp && !mousedown) {
+      dt = timestamp - lastRenderTimestamp;
+      worldOffsetX -= pixelVelocityX * dt / scale;
+      worldOffsetY -= pixelVelocityY * dt / scale;
+      ratio = 1 - Math.min(
+        1, DECELERATION_BLEED_RATIO_PER_TICK * dt / (1000 / 60)
+      );
+      pixelVelocityX *= ratio;
+      pixelVelocityY *= ratio;
+    }
+    lastRenderTimestamp = timestamp;
 
     stars = getStars(
       worldOffsetX,
@@ -71,9 +89,13 @@
     mousedown = true;
     lastMouseX = e.pageX;
     lastMouseY = e.pageY;
+    pixelVelocityX = 0;
+    pixelVelocityY = 0;
   }, false);
 
   document.addEventListener("mousemove", function(e) {
+    var dt = e.timeStamp - lastMoveTimestamp;
+
     if (!mousedown) return;
     var dX = e.pageX - lastMouseX;
     var dY = e.pageY - lastMouseY;
@@ -81,9 +103,14 @@
     lastMouseY = e.pageY;
     worldOffsetX -= dX / scale;
     worldOffsetY -= dY / scale;
+
+    pixelVelocityX = dX / dt;
+    pixelVelocityY = dY / dt;
+    lastMoveTimestamp = e.timeStamp;
   }, false);
 
   document.addEventListener("mouseup", function(e) {
+    if (e.button !== 0) return;
     mousedown = false;
   }, false);
 
@@ -94,6 +121,8 @@
     worldOffsetX += (e.clientX - rect.left) * (1 - 1 / mult) / scale;
     worldOffsetY += (e.clientY - rect.top) * (1 - 1 / mult) / scale;
     scale *= mult;
+    pixelVelocityX = 0;
+    pixelVelocityY = 0;
   }, false);
 
   var canvasWidth = canvas.width;
