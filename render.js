@@ -18,7 +18,7 @@
   var canvas = document.getElementById("starfield");
   canvas.style['background-color'] = 'black';
 
-  function render() {
+  function render(timestamp) {
     var star, stars, i, j, context, brightnessToStars;
 
     requestAnimationFrame(render);
@@ -55,10 +55,10 @@
       }
     }
 
-    timestamps.push(new Date().getTime());
+    timestamps.push(timestamp);
     if (timestamps.length > 10) {
       if (DEBUG) console.log(
-        (9 * 1000 / (timestamps[9] - timestamps[0])).toFixed(2) + ' fps'
+        (10 * 1000 / (timestamps[10] - timestamps[0])).toFixed(2) + ' fps'
       );
       timestamps = [];
     }
