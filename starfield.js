@@ -5,6 +5,7 @@ var BRIGHTNESS_FACTOR = 15; // Higher = brighter
 var STAR_SIZE_PIXELS = 1.5;
 var STAR_RANGE_INDICES = 10; // Higher = more random looking, comp expensive
 var LEVEL_DEPTH = 5; // Higher = more (faint) stars, comp expensive
+var DEBUG = false;
 
 // TODO:
 // - touchscreen support
@@ -119,7 +120,7 @@ function render() {
 
   timestamps.push(new Date().getTime());
   if (timestamps.length > 10) {
-    console.log(
+    if (DEBUG) console.log(
       (9 * 1000 / (timestamps[9] - timestamps[0])).toFixed(2) + ' fps'
     );
     timestamps = [];
