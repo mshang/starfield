@@ -31,3 +31,18 @@ canvas.addEventListener("mousewheel", function(e) {
   offsetY += (e.clientY - rect.top) * (1 - 1 / mult) / scale;
   scale *= mult;
 }, false);
+
+var canvasWidth = canvas.width;
+var canvasHeight = canvas.height;
+
+if (typeof screenfull !== "undefined") {
+  document.addEventListener(screenfull.raw.fullscreenchange, function() {
+    if (screenfull.isFullscreen) {
+      canvas.width = document.body.clientWidth;
+      canvas.height = document.body.clientHeight;
+    } else {
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+    }
+  });
+}

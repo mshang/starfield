@@ -3,7 +3,9 @@
     <title>Starfield</title>
   </head>
   <body>
-    <canvas id="starfield" width=500 height=300 />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/screenfull.js/1.0.4/screenfull.min.js"></script>
+    <canvas id="starfield" width=500 height=300></canvas>
+    <div><button onclick="screenfull.request(document.getElementById('starfield'));">Fullscreen</button></div>
     <script src="rrcache.js"></script>
     <script src="starfield.js"></script>
     <script src="listeners.js"></script>
