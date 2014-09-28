@@ -34,16 +34,30 @@ canvas.addEventListener("mousewheel", function(e) {
 
 var canvasWidth = canvas.width;
 var canvasHeight = canvas.height;
+
 if (window.navigator.standalone) {
-  canvas.width = document.body.clientWidth;
-  canvas.height = document.body.clientHeight;
+  document.body.style['height'] = "100%";
+  document.body.style['width'] = "100%";
+  document.body.style['margin'] = "0px";
+  document.documentElement.style['height'] = "100%";
+  document.documentElement.style['width'] = "100%";
+  document.documentElement.style['margin'] = "0px";
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 }
+
+document.addEventListener("resize", function() {
+  if (window.navigator.standalone) {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+});
 
 if (typeof screenfull !== "undefined") {
   document.addEventListener(screenfull.raw.fullscreenchange, function() {
     if (screenfull.isFullscreen) {
-      canvas.width = document.body.clientWidth;
-      canvas.height = document.body.clientHeight;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     } else {
       canvas.width = canvasWidth;
       canvas.height = canvasHeight;
