@@ -14,12 +14,6 @@ var mousedown = false;
 var lastMouseX;
 var lastMouseY;
 
-function Star(worldX, worldY, brightness) {
-  this.worldX = worldX;
-  this.worldY = worldY;
-  this.brightness = brightness;
-}
-
 var canvas = document.getElementById("starfield");
 canvas.style['background-color'] = 'black';
 

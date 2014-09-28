@@ -12,6 +12,12 @@ var LEVEL_DEPTH = 5; // Higher = more (faint) stars, comp expensive
 
 var MAX_INT = -1 >>> 1;
 
+function Star(worldX, worldY, brightness) {
+  this.worldX = worldX;
+  this.worldY = worldY;
+  this.brightness = brightness;
+}
+
 function hashFnv32a(str) {
   var i, l,
     hval = 0x811c9dc5;
