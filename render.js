@@ -13,8 +13,10 @@
   var scale = 1;
 
   var mousedown = false;
+  var isPinching = false;
   var lastMouseX;
   var lastMouseY;
+  var lastScale;
   var pixelVelocityX = 0;
   var pixelVelocityY = 0;
   var lastMoveTimestamp = 0;
@@ -87,6 +89,7 @@
 
   var hammer = new Hammer.Manager(canvas)
   hammer.add(new Hammer.Pan());
+  hammer.add(new Hammer.Pinch());
 
   hammer.on('panstart', function(e) {
     mousedown = true;
@@ -105,6 +108,26 @@
     mousedown = false;
     pixelVelocityX = -e.velocityX;
     pixelVelocityY = -e.velocityY;
+  });
+
+  hammer.on('pinchstart', function(e) {
+    isPinching = true;
+    lastScale = 1;
+    pixelVelocityX = 0;
+    pixelVelocityY = 0;
+  });
+
+  hammer.on('pinchmove', function(e) {
+    var rect = canvas.getBoundingClientRect();
+    var scaleDelta = e.scale / lastScale;
+    worldOffsetX += (e.center.x - rect.left) * (1 - 1 / scaleDelta) / scale;
+    worldOffsetY += (e.center.y - rect.top) * (1 - 1 / scaleDelta) / scale;
+    scale *= scaleDelta;
+    lastScale = e.scale;
+  });
+
+  hammer.on('pinchend', function(e) {
+    isPinching = false;
   });
 
   canvas.addEventListener("mousewheel", function(e) {
