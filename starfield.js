@@ -8,11 +8,6 @@ var getStars;
   var STAR_RANGE_INDICES = 10; // Higher = more random looking, comp expensive
   var LEVEL_DEPTH = 5; // Higher = more (faint) stars, comp expensive
 
-  // TODO:
-  // - touchscreen support
-  // - resize / fullscreen
-  // - older browsers / polyfill
-
   var MAX_INT = -1 >>> 1;
 
   function Star(worldX, worldY, brightness) {
