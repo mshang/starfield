@@ -85,7 +85,8 @@
 
   requestAnimationFrame(render);
 
-  var hammer = new Hammer(canvas);
+  var hammer = new Hammer.Manager(canvas)
+  hammer.add(new Hammer.Pan());
 
   hammer.on('panstart', function(e) {
     mousedown = true;
