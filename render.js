@@ -141,8 +141,10 @@
     pixelVelocityY = 0;
   }, false);
 
-  var canvasWidth = canvas.width;
+  var canvasBorder = window.getComputedStyle(canvas)['border'];
+  var canvasMargin = window.getComputedStyle(canvas)['margin'];
   var canvasHeight = canvas.height;
+  var canvasWidth = canvas.width;
 
   if (window.navigator.standalone) {
     document.body.style['height'] = "100%";
@@ -167,9 +169,13 @@
       if (screenfull.isFullscreen) {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+        canvas.style["border"] = "none";
+        canvas.style["margin"] = "0";
       } else {
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
+        canvas.style["border"] = canvasBorder;
+        canvas.style["margin"] = canvasMargin;
       }
     });
   }
