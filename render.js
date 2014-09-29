@@ -155,6 +155,8 @@
     document.documentElement.style['margin'] = "0px";
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    canvas.style["border"] = "none";
+    canvas.style["margin"] = "0";
   }
 
   document.addEventListener("resize", function() {
