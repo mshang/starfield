@@ -21,7 +21,6 @@ var canvas;
   var lastScale;
   var pixelVelocityX = 0;
   var pixelVelocityY = 0;
-  var lastMoveTimestamp = 0;
   var lastRenderTimestamp = 0;
 
   canvas = document.getElementById("starfield");
