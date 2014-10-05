@@ -48,7 +48,8 @@
     <canvas id="starfield" width=500 height=300></canvas>
     <button id="fullscreen" href="#" onclick="screenfull.request(document.getElementById('starfield'));">Fullscreen</button>
     <script src="rrcache.js"></script>
-    <script src="starfield.js"></script>
-    <script src="render.js"></script>
+    <script src="starfield.js">// depends on rrcache.js</script>
+    <script src="render.js">// depends on hammer</script>
+    <script src="fullscreen.js">// depends on render.js</script>
   </body>
 </html>
