@@ -27,7 +27,6 @@
 
   function render(timestamp) {
     var star, stars, i, j, context, brightnessToStars, dt, ratio;
-    var star_size_pixels = STAR_SIZE_PIXELS * (window.devicePixelRatio || 1);
 
     requestAnimationFrame(render);
 
@@ -70,8 +69,8 @@
         context.fillRect(
           (star.worldX - worldOffsetX) * scale,
           (star.worldY - worldOffsetY) * scale,
-          star_size_pixels,
-          star_size_pixels
+          STAR_SIZE_PIXELS,
+          STAR_SIZE_PIXELS
         );
       }
     }
