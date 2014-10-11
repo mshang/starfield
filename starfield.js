@@ -8,12 +8,6 @@ var getStars;
 
   var MAX_INT = -1 >>> 1;
 
-  function Star(worldX, worldY, brightness) {
-    this.worldX = worldX;
-    this.worldY = worldY;
-    this.brightness = brightness;
-  }
-
   function hashFnv32a(str) {
     var i, l,
       hval = 0x811c9dc5;
