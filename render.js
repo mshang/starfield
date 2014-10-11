@@ -53,7 +53,8 @@ function startRender(canvas, getStarsCallback) {
       pixelVelocityY *= ratio;
     }
     // Prevent redrawing
-    if (Math.abs(pixelVelocityX) < 0.1 && Math.abs(pixelVelocityY) < 0.1) {
+    if (Math.abs(pixelVelocityX) < 0.01 && Math.abs(pixelVelocityY) < 0.01) {
+      if (DEBUG) console.log("locked");
       pixelVelocityX = 0;
       pixelVelocityY = 0;
     }
