@@ -1,5 +1,3 @@
-/* vim: set softtabstop=2 shiftwidth=2 expandtab: */
-
 function setupFullscreenListeners(canvas) {
   var canvasBorder = window.getComputedStyle(canvas)['border'];
   var canvasMargin = window.getComputedStyle(canvas)['margin'];

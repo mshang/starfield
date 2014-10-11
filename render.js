@@ -1,5 +1,3 @@
-/* vim: set softtabstop=2 shiftwidth=2 expandtab: */
-
 function startRender(canvas, getStarsCallback) {
   var STAR_SIZE_PIXELS = 1.5;
   var DECELERATION_BLEED_RATIO_PER_TICK = 0.05; // A tick is 1/60 sec.
