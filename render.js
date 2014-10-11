@@ -157,6 +157,7 @@ function startRender(canvas, getStarsCallback) {
     scale *= mult;
     pixelVelocityX = 0;
     pixelVelocityY = 0;
+    e.preventDefault();
   }, false);
 
 }
