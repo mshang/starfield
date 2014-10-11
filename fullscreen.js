@@ -1,6 +1,6 @@
 /* vim: set softtabstop=2 shiftwidth=2 expandtab: */
 
-(function () {
+function setupFullscreenListeners(canvas) {
   var canvasBorder = window.getComputedStyle(canvas)['border'];
   var canvasMargin = window.getComputedStyle(canvas)['margin'];
   var canvasHeight = canvas.height;
@@ -41,4 +41,4 @@
       }
     });
   }
-})();
+}

@@ -1,8 +1,6 @@
 /* vim: set softtabstop=2 shiftwidth=2 expandtab: */
 
-var canvas;
-
-(function () {
+function startRender(canvas, getStarsCallback) {
   var STAR_SIZE_PIXELS = 1.5;
   var DECELERATION_BLEED_RATIO_PER_TICK = 0.05; // A tick is 1/60 sec.
   var DEBUG = false;
@@ -23,7 +21,6 @@ var canvas;
   var pixelVelocityY = 0;
   var lastRenderTimestamp = 0;
 
-  canvas = document.getElementById("starfield");
   canvas.style['background-color'] = 'black';
 
   function render(timestamp) {
@@ -44,7 +41,7 @@ var canvas;
     }
     lastRenderTimestamp = timestamp;
 
-    stars = getStars(
+    stars = getStarsCallback(
       worldOffsetX,
       worldOffsetY, 
       canvas.width / scale,
@@ -141,4 +138,4 @@ var canvas;
     pixelVelocityY = 0;
   }, false);
 
-})();
+}
