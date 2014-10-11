@@ -10,6 +10,11 @@ function startRender(canvas, getStarsCallback) {
   // scale of 100 means 1 world unit = 100 canvas pixels
   var scale = 1;
 
+  // Used to determine whether or not to redraw.
+  var lastWorldOffsetX = null;
+  var lastWorldOffsetY = null;
+  var lastScale = null;
+
   var mousedown = false;
   var isPinching = false;
   var lastMouseX;
@@ -26,18 +31,43 @@ function startRender(canvas, getStarsCallback) {
 
     requestAnimationFrame(render);
 
+    timestamps.push(timestamp);
+    if (timestamps.length > 10) {
+      if (DEBUG) console.log(
+        (10 * 1000 / (timestamps[10] - timestamps[0])).toFixed(2) + ' fps'
+      );
+      timestamps = [];
+    }
+
     // deceleration
     if (lastRenderTimestamp && !mousedown) {
       dt = timestamp - lastRenderTimestamp;
-      worldOffsetX -= pixelVelocityX * dt / scale;
-      worldOffsetY -= pixelVelocityY * dt / scale;
+      if (pixelVelocityX || pixelVelocityY) {
+        worldOffsetX -= pixelVelocityX * dt / scale;
+        worldOffsetY -= pixelVelocityY * dt / scale;
+      }
       ratio = 1 - Math.min(
         1, DECELERATION_BLEED_RATIO_PER_TICK * dt / (1000 / 60)
       );
       pixelVelocityX *= ratio;
       pixelVelocityY *= ratio;
     }
+    // Prevent redrawing
+    if (Math.abs(pixelVelocityX) < 0.1 && Math.abs(pixelVelocityY) < 0.1) {
+      pixelVelocityX = 0;
+      pixelVelocityY = 0;
+    }
     lastRenderTimestamp = timestamp;
+
+    if (
+      (worldOffsetX === lastWorldOffsetX) &&
+      (worldOffsetY === lastWorldOffsetY) &&
+      (scale === lastScale)
+    ) return;
+
+    lastWorldOffsetX = worldOffsetX;
+    lastWorldOffsetY = worldOffsetY;
+    lastScale = scale;
 
     stars = getStarsCallback(
       worldOffsetX,
@@ -69,14 +99,6 @@ function startRender(canvas, getStarsCallback) {
           STAR_SIZE_PIXELS
         );
       }
-    }
-
-    timestamps.push(timestamp);
-    if (timestamps.length > 10) {
-      if (DEBUG) console.log(
-        (10 * 1000 / (timestamps[10] - timestamps[0])).toFixed(2) + ' fps'
-      );
-      timestamps = [];
     }
   }
 
