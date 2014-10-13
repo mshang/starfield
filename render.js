@@ -79,7 +79,7 @@ function startRender(canvas, getStarsCallback) {
 
     // setting fillStyle is expensive, so quantize and batch it.
     brightnessToStars = [];
-    for (i = 0; i < 100; i++) brightnessToStars.push([]);
+    for (i = 0; i <= 100; i++) brightnessToStars.push([]);
     for (i = 0; i < stars.length; i++) {
       star = stars[i];
       brightnessToStars[Math.floor(star.brightness * 100)].push(star);
@@ -88,7 +88,7 @@ function startRender(canvas, getStarsCallback) {
     context = canvas.getContext('2d')
     context.clearRect(0, 0, canvas.width, canvas.height);
 
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i <= 100; i++) {
       context.fillStyle = 'rgba(255, 255, 255, ' + i / 100 + ')';
       stars = brightnessToStars[i];
       for (j = 0; j < stars.length; j++) {
